@@ -14,37 +14,30 @@ Este directorio contiene la configuración de Docker Compose para desplegar la s
 
 ## Opciones de Despliegue
 
-Hemos preparado dos tipos de despliegue según tus necesidades de red:
+Hemos preparado dos tipos de despliegue. **Se recomienda intentar primero el despliegue en modo Bridge** (estándar). Si tras el despliegue experimentas problemas de conectividad (pings fallidos o timeouts de SNMP) debido al firewall de tu router, utiliza el modo Host.
 
-### 1. Host Network (Recomendado para entornos con Firewalls/Gateways)
-Ubicación: `./host-network/`
-
-Esta configuración pone el backend en la red del host directamente. Es ideal si tu router (ej. OPNsense) bloquea el tráfico proveniente de redes internas de Docker.
-
-*   **Ventaja**: Evita problemas de firewall y rutas con SNMP.
-*   **Despliegue**:
-    ```bash
-    cd host-network
-    docker compose up -d
-    ```
-
-### 2. Bridge Network (Modo Estándar de Docker)
+### 1. Bridge Network (Modo Recomendado)
 Ubicación: `./bridge-network/`
 
-Esta es la configuración estándar y aislada de Docker. Úsala si tu entorno de red permite el tráfico desde subredes bridge o si has configurado rutas estáticas en tu router.
+Esta es la configuración estándar y aislada de Docker. Úsala para mantener el aislamiento entre contenedores. Si tu router (ej. OPNsense) bloquea el tráfico, deberás añadir una ruta estática para la red de Docker o pasar al modo Host.
 
-*   **Ventaja**: Mayor aislamiento y seguridad entre contenedores.
+*   **Ventaja**: Mayor aislamiento y seguridad.
 *   **Despliegue**:
     ```bash
     cd bridge-network
     docker compose up -d
     ```
 
----
+### 2. Host Network (Solución para problemas de Firewall)
+Ubicación: `./host-network/`
 
-## Detalles Técnicos (Modo Host)
+Esta configuración pone el backend en la red del host directamente. Úsala si el modo Bridge no funciona debido a que tu gateway de red bloquea las peticiones SNMP provenientes de Docker.
 
-Si usas el modo **Host Network**, ten en cuenta:
-*   El **Gateway (Nginx)** utiliza `host.docker.internal:3000` para hablar con el backend.
-*   El **Backend** conecta a la base de datos vía `localhost:5432`.
-*   Se han eliminado los healthchecks pesados para mantener los logs limpios.
+*   **Ventaja**: Máxima compatibilidad con routers/gateways (el tráfico sale con la IP física de la máquina).
+*   **Despliegue**:
+    ```bash
+    cd host-network
+    docker compose up -d
+    ```
+
+
