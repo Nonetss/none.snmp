@@ -2,6 +2,12 @@
 
 Este directorio contiene la configuración de Docker Compose para desplegar la solución de monitorización SNMP.
 
+## Repositorios
+
+- [Backend](https://github.com/Nonetss/none.snmp-backend)
+- [Frontend](https://github.com/Nonetss/none.snmp-frontend)
+
+
 ## Vista Previa
 
 | Dashboard | Dispositivos | Grafo de Red |
