@@ -2,6 +2,17 @@
 
 Este directorio contiene la configuración de Docker Compose para desplegar la solución de monitorización SNMP.
 
+## Vista Previa
+
+| Dashboard | Dispositivos | Grafo de Red |
+| :---: | :---: | :---: |
+| <img src="./img/dashboard.png" width="250"> | <img src="./img/device-dashboard.png" width="250"> | <img src="./img/grafo.png" width="250"> |
+
+| Ajustes | Detalles del Dispositivo |
+| :---: | :---: |
+| <img src="./img/settings.png" width="250"> | <img src="./img/device-app.png" width="250"> |
+
+
 ## Configuración de Red (Networking)
 
 Durante el despliegue, hemos tenido que realizar ajustes específicos en la arquitectura de red para permitir que el backend pueda comunicarse con dispositivos críticos gestores de red (como routers OPNsense).
