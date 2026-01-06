@@ -1,4 +1,4 @@
-# None-SNMP Docker Deployment
+# NONE.SNMP
 
 Este directorio contiene la configuración de Docker Compose para desplegar la solución de monitorización SNMP.
 
