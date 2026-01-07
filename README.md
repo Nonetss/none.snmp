@@ -10,13 +10,20 @@ Este directorio contiene la configuración de Docker Compose para desplegar la s
 
 ## Vista Previa
 
-| Dashboard | Dispositivos | Grafo de Red |
+### Visualización y Dispositivos
+| Dashboard | Detalle de Dispositivo | Explorador de Aplicaciones |
 | :---: | :---: | :---: |
-| <img src="./img/dashboard.png" width="250"> | <img src="./img/device-dashboard.png" width="250"> | <img src="./img/network-topology.png" width="250"> |
+| <img src="./img/dashboard.png" width="250"> | <img src="./img/device-dashboard.png" width="250"> | <img src="./img/search-apps.png" width="250"> |
 
-| Ajustes | Detalles del Dispositivo |
+### Red y Topología
+| Grafo de Red | Búsqueda de Red |
 | :---: | :---: |
-| <img src="./img/settings-subnet.png" width="250"> | <img src="./img/search-apps.png" width="250"> |
+| <img src="./img/network-topology.png" width="250"> | <img src="./img/search-network.png" width="250"> |
+
+### Configuración y Sistema
+| Gestión de Subredes | Tareas Programadas | Autenticación SNMP |
+| :---: | :---: | :---: |
+| <img src="./img/settings-subnet.png" width="250"> | <img src="./img/settings-task.png" width="250"> | <img src="./img/snmp-auth.png" width="250"> |
 
 ## Opciones de Despliegue
 
