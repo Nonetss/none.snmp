@@ -10,20 +10,21 @@ Este directorio contiene la configuración de Docker Compose para desplegar la s
 
 ## Vista Previa
 
-### Visualización y Dispositivos
-| Dashboard | Detalle de Dispositivo | Explorador de Aplicaciones |
-| :---: | :---: | :---: |
-| <img src="./img/dashboard.png" width="250"> | <img src="./img/device-dashboard.png" width="250"> | <img src="./img/search-apps.png" width="250"> |
-
-### Red y Topología
-| Grafo de Red | Búsqueda de Red |
+| Dashboard | Detalle de Dispositivo |
 | :---: | :---: |
-| <img src="./img/network-topology.png" width="250"> | <img src="./img/search-network.png" width="250"> |
+| <img src="./img/dashboard.png" width="400"> | <img src="./img/device-dashboard.png" width="400"> |
 
-### Configuración y Sistema
-| Gestión de Subredes | Tareas Programadas | Autenticación SNMP |
-| :---: | :---: | :---: |
-| <img src="./img/settings-subnet.png" width="250"> | <img src="./img/settings-task.png" width="250"> | <img src="./img/snmp-auth.png" width="250"> |
+| Explorador de Aplicaciones | Grafo de Red |
+| :---: | :---: |
+| <img src="./img/search-apps.png" width="400"> | <img src="./img/network-topology.png" width="400"> |
+
+| Búsqueda de Red | Gestión de Subredes |
+| :---: | :---: |
+| <img src="./img/search-network.png" width="400"> | <img src="./img/settings-subnet.png" width="400"> |
+
+| Tareas Programadas | Autenticación SNMP |
+| :---: | :---: |
+| <img src="./img/settings-task.png" width="400"> | <img src="./img/snmp-auth.png" width="400"> |
 
 ## Opciones de Despliegue
 
