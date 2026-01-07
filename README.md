@@ -12,11 +12,11 @@ Este directorio contiene la configuración de Docker Compose para desplegar la s
 
 | Dashboard | Dispositivos | Grafo de Red |
 | :---: | :---: | :---: |
-| <img src="./img/dashboard.png" width="250"> | <img src="./img/device-dashboard.png" width="250"> | <img src="./img/grafo.png" width="250"> |
+| <img src="./img/dashboard.png" width="250"> | <img src="./img/device-dashboard.png" width="250"> | <img src="./img/network-topology.png" width="250"> |
 
 | Ajustes | Detalles del Dispositivo |
 | :---: | :---: |
-| <img src="./img/settings.png" width="250"> | <img src="./img/device-app.png" width="250"> |
+| <img src="./img/settings-subnet.png" width="250"> | <img src="./img/search-apps.png" width="250"> |
 
 ## Opciones de Despliegue
 
