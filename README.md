@@ -28,14 +28,82 @@ Este directorio contiene la configuración de Docker Compose para desplegar la s
 
 ## Opciones de Despliegue
 
-Hemos preparado dos tipos de despliegue. **Se recomienda intentar primero el despliegue en modo Bridge** (estándar). Si tras el despliegue experimentas problemas de conectividad (pings fallidos o timeouts de SNMP) debido al firewall de tu router, utiliza el modo Host.
+Disponemos de tres opciones de despliegue. **Se recomienda usar la imagen unificada** para la mayoría de los casos.
 
-### 1. Bridge Network (Modo Recomendado)
+---
+
+### 🚀 Imagen Unificada (Recomendado)
+Ubicación: `./` (raíz del directorio docker)
+
+Esta es la opción más simple. Una única imagen Docker que contiene tanto el backend como el frontend, reduciendo la complejidad del despliegue.
+
+*   **Ventajas**:
+    - Solo 2 contenedores (app + database) en lugar de 3
+    - Menor consumo de recursos
+    - Configuración más sencilla
+    - Ideal para despliegues en un solo servidor
+
+*   **Despliegue**:
+    ```bash
+    docker compose up -d
+    ```
+
+*   **Configuración (`compose.yml`)**:
+    ```yaml
+    services:
+      app:
+        container_name: none-snmp
+        image: ghcr.io/nonetss/none-snmp:latest
+        restart: always
+        environment:
+          - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-postgres}
+        ports:
+          - '4321:80'
+        depends_on:
+          database:
+            condition: service_healthy
+
+      database:
+        container_name: none-snmp-database
+        image: postgres:16
+        restart: always
+        environment:
+          - POSTGRES_USER=${POSTGRES_USER:-postgres}
+          - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+          - POSTGRES_DB=${POSTGRES_DB:-postgres}
+        volumes:
+          - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+          test:
+            [
+              'CMD-SHELL',
+              'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}',
+            ]
+          interval: 5s
+          timeout: 5s
+          retries: 5
+
+    volumes:
+      postgres_data:
+    ```
+
+---
+
+### 🌐 Bridge Network (Imágenes Separadas)
 Ubicación: `./bridge-network/`
 
-Esta es la configuración estándar y aislada de Docker. Úsala para mantener el aislamiento entre contenedores. Si tu router (ej. OPNsense) bloquea el tráfico, deberás añadir una ruta estática para la red de Docker o pasar al modo Host.
+Esta configuración usa imágenes separadas para backend y frontend. Úsala si necesitas escalar o actualizar cada servicio de forma independiente.
 
-*   **Ventaja**: Mayor aislamiento y seguridad.
+*   **Ventajas**:
+    - Mayor flexibilidad para escalar backend o frontend por separado
+    - Actualizaciones independientes de cada componente
+    - Mejor para entornos de desarrollo o cuando necesitas depurar
+
+*   **Cuándo usarla**:
+    - Necesitas escalar horizontalmente el backend
+    - Quieres actualizar frontend y backend por separado
+    - Desarrollo local con hot-reload
+
 *   **Despliegue**:
     ```bash
     cd bridge-network
@@ -92,16 +160,38 @@ Esta es la configuración estándar y aislada de Docker. Úsala para mantener el
       postgres_data:
     ```
 
-### 2. Host Network (Solución para problemas de Firewall)
+---
+
+### 🔧 Host Network (Solución para problemas de Firewall)
 Ubicación: `./host-network/`
 
-Esta configuración pone el backend en la red del host directamente. Úsala si el modo Bridge no funciona debido a que tu gateway de red bloquea las peticiones SNMP provenientes de Docker.
+Esta configuración pone el backend en la red del host directamente. Úsala si experimentas problemas de conectividad SNMP debido a que tu gateway de red bloquea las peticiones provenientes de Docker.
 
-*   **Ventaja**: Máxima compatibilidad con routers/gateways (el tráfico sale con la IP física de la máquina).
+*   **Ventajas**:
+    - Máxima compatibilidad con routers/gateways
+    - El tráfico sale con la IP física de la máquina
+    - Soluciona problemas de firewall con SNMP
+
+*   **Cuándo usarla**:
+    - Los pings o peticiones SNMP fallan desde Docker
+    - Tu router (ej. OPNsense) bloquea el tráfico de la red Docker
+    - No puedes/quieres añadir rutas estáticas en tu firewall
+
 *   **Despliegue**:
     ```bash
     cd host-network
     docker compose up -d
     ```
 
+---
 
+## Comparativa Rápida
+
+| Característica | Unificada | Bridge | Host |
+|----------------|-----------|--------|------|
+| Contenedores | 2 | 3 | 3 |
+| Consumo recursos | ⭐ Bajo | Medio | Medio |
+| Complejidad | ⭐ Simple | Media | Media |
+| Escalabilidad | Básica | ⭐ Alta | ⭐ Alta |
+| Compatibilidad firewall | Media | Media | ⭐ Alta |
+| Actualizaciones independientes | ❌ | ✅ | ✅ |
