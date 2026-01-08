@@ -1,7 +1,7 @@
 services:
   backend:
     container_name: none-snmp-backend
-    image: ghcr.io/nonetss/none-snmp-backend:v0.3.2
+    image: ghcr.io/nonetss/none-snmp-backend:v0.4.1
     restart: always
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-postgres}
@@ -13,7 +13,7 @@ services:
 
   frontend:
     container_name: none-snmp-frontend
-    image: ghcr.io/nonetss/none-snmp-frontend:v0.3.2
+    image: ghcr.io/nonetss/none-snmp-frontend:v0.4.1
     restart: always
     depends_on:
       - backend
