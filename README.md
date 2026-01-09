@@ -26,6 +26,18 @@ Este directorio contiene la configuración de Docker Compose para desplegar la s
 | :---: | :---: |
 | <img src="./img/settings-task.png" width="400"> | <img src="./img/snmp-auth.png" width="400"> |
 
+| Monitorización TCP y NTFY |
+| :---: |
+| <img src="./img/monitorizacion.png" width="800"> |
+
+## Características Principales
+
+*   **Monitorización SNMP**: Recolección de datos mediante SNMP v2c/v3.
+*   **Monitorización TCP**: Nuevo soporte para monitorización de estados de puertos TCP.
+*   **Notificaciones NTFY**: Integración con ntfy para alertas en tiempo real.
+*   **Topología de Red**: Generación automática de grafos de red.
+*   **Gestión de Subredes**: Escaneo y descubrimiento de dispositivos.
+
 ## Opciones de Despliegue
 
 Disponemos de tres opciones de despliegue. **Se recomienda usar la imagen unificada** para la mayoría de los casos.
@@ -53,7 +65,7 @@ Esta es la opción más simple. Una única imagen Docker que contiene tanto el b
     services:
       app:
         container_name: none-snmp
-        image: ghcr.io/nonetss/none-snmp:latest
+        image: ghcr.io/nonetss/none-snmp:v0.4.3
         restart: always
         environment:
           - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-postgres}
@@ -115,7 +127,7 @@ Esta configuración usa imágenes separadas para backend y frontend. Úsala si n
     services:
       backend:
         container_name: none-snmp-backend
-        image: ghcr.io/nonetss/none-snmp-backend:v0.4.2
+        image: ghcr.io/nonetss/none-snmp-backend:v0.4.3
         restart: always
         environment:
           - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-postgres}
@@ -127,7 +139,7 @@ Esta configuración usa imágenes separadas para backend y frontend. Úsala si n
 
       frontend:
         container_name: none-snmp-frontend
-        image: ghcr.io/nonetss/none-snmp-frontend:v0.4.2
+        image: ghcr.io/nonetss/none-snmp-frontend:v0.4.3
         restart: always
         environment:
           - BACKEND_URL=http://backend:3000
