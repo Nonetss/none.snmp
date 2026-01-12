@@ -65,7 +65,7 @@ Esta es la opción más simple. Una única imagen Docker que contiene tanto el b
     services:
       app:
         container_name: none-snmp
-        image: ghcr.io/nonetss/none-snmp:v0.4.3
+        image: ghcr.io/nonetss/none-snmp:v0.5.1
         restart: always
         environment:
           - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-postgres}
@@ -127,7 +127,7 @@ Esta configuración usa imágenes separadas para backend y frontend. Úsala si n
     services:
       backend:
         container_name: none-snmp-backend
-        image: ghcr.io/nonetss/none-snmp-backend:v0.4.3
+        image: ghcr.io/nonetss/none-snmp-backend:v0.5.1
         restart: always
         environment:
           - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-postgres}
@@ -139,7 +139,7 @@ Esta configuración usa imágenes separadas para backend y frontend. Úsala si n
 
       frontend:
         container_name: none-snmp-frontend
-        image: ghcr.io/nonetss/none-snmp-frontend:v0.4.3
+        image: ghcr.io/nonetss/none-snmp-frontend:v0.5.1
         restart: always
         environment:
           - BACKEND_URL=http://backend:3000

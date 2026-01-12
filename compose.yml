@@ -1,7 +1,7 @@
 services:
   app:
     container_name: none-snmp
-    image: ghcr.io/nonetss/none-snmp:v0.4.3
+    image: ghcr.io/nonetss/none-snmp:v0.5.1
     restart: always
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-postgres}
