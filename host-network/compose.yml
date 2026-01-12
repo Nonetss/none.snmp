@@ -5,7 +5,7 @@ services:
     restart: always
     network_mode: host
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@localhost:5432/${POSTGRES_DB:-postgres}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@127.0.0.1:5432/${POSTGRES_DB:-postgres}
     depends_on:
       database:
         condition: service_healthy
@@ -16,22 +16,14 @@ services:
     container_name: none-snmp-frontend
     image: ghcr.io/nonetss/none-snmp-frontend:v0.5.1
     restart: always
-    depends_on:
-      - backend
-
-  gateway:
-    container_name: none-snmp-gateway
-    image: nginx:alpine
-    restart: always
     ports:
       - '4321:80'
-    volumes:
-      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - frontend
-      - backend
+    environment:
+      - BACKEND_URL=http://backend:3000
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'backend:host-gateway'
+    depends_on:
+      - backend
 
   database:
     container_name: none-snmp-database
