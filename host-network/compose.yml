@@ -1,7 +1,7 @@
 services:
   backend:
     container_name: none-snmp-backend
-    image: ghcr.io/nonetss/none-snmp-backend:v0.5.1
+    image: ghcr.io/nonetss/none-snmp-backend:v0.5.3
     restart: always
     network_mode: host
     environment:
@@ -14,7 +14,7 @@ services:
 
   frontend:
     container_name: none-snmp-frontend
-    image: ghcr.io/nonetss/none-snmp-frontend:v0.5.1
+    image: ghcr.io/nonetss/none-snmp-frontend:v0.5.3
     restart: always
     ports:
       - '4321:80'
