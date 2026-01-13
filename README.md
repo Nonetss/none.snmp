@@ -207,3 +207,7 @@ Esta configuración pone el backend en la red del host directamente. Úsala si e
 | Escalabilidad | Básica | ⭐ Alta | ⭐ Alta |
 | Compatibilidad firewall | Media | Media | ⭐ Alta |
 | Actualizaciones independientes | ❌ | ✅ | ✅ |
+
+## Licencia
+
+Este proyecto está bajo la Licencia GNU General Public License v3.0 (GPLv3). Consulta el archivo [LICENSE](./LICENSE) para más detalles.
