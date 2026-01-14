@@ -1,6 +1,6 @@
 # Multi-stage build to combine backend and frontend images
-FROM ghcr.io/nonetss/none-snmp-backend:v0.5.3 AS backend
-FROM ghcr.io/nonetss/none-snmp-frontend:v0.5.3 AS frontend
+FROM ghcr.io/nonetss/none-snmp-backend:v0.5.4 AS backend
+FROM ghcr.io/nonetss/none-snmp-frontend:v0.5.4 AS frontend
 
 # Final image
 FROM oven/bun:1-debian AS runtime
