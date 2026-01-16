@@ -1,19 +1,22 @@
 import type { ListContainerDocker } from '@/features/docker/type/container/list'
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import axios from 'axios'
-import { Box, RefreshCcw, Search, AlertCircle } from 'lucide-react'
+import { Box, RefreshCcw, Search, AlertCircle, Activity, X } from 'lucide-react'
 
 const ContainerManager: React.FC = () => {
   const [containers, setContainers] = useState<ListContainerDocker['response']>([])
+  const [metadata, setMetadata] = useState<ListContainerDocker['metadata'] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
       const response = await axios.get<ListContainerDocker>('/api/v0/komodo/container')
       setContainers(response.data.response)
+      setMetadata(response.data.metadata)
       setError(null)
     } catch (err: any) {
       setError(err.message || 'Failed to fetch containers')
@@ -27,15 +30,18 @@ const ContainerManager: React.FC = () => {
   }, [fetchData])
 
   const filteredContainers = useMemo(() => {
-    if (!searchQuery) return containers
-    const q = searchQuery.toLowerCase()
-    return containers.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        c.image.toLowerCase().includes(q) ||
-        c.name.toLowerCase().includes(q)
-    )
-  }, [containers, searchQuery])
+    return containers.filter((c) => {
+      const matchesSearch =
+        !searchQuery ||
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.image.toLowerCase().includes(searchQuery.toLowerCase())
+
+      const matchesStatus =
+        !selectedStatus || c.state.toLowerCase() === selectedStatus.toLowerCase()
+
+      return matchesSearch && matchesStatus
+    })
+  }, [containers, searchQuery, selectedStatus])
 
   if (loading && containers.length === 0) {
     return (
@@ -50,37 +56,81 @@ const ContainerManager: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex justify-between items-end border-b border-white/10 pb-6">
-        <div className="flex items-center gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-4 bg-white" />
-              <h1 className="text-2xl font-bold tracking-tighter uppercase">DOCKER.CONTAINERS</h1>
+      <div className="flex flex-col gap-6 border-b border-white/10 pb-6">
+        <div className="flex justify-between items-end">
+          <div className="flex items-center gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-4 bg-white" />
+                <h1 className="text-2xl font-bold tracking-tighter uppercase">DOCKER.CONTAINERS</h1>
+              </div>
+              <p className="text-[9px] text-neutral-500 uppercase tracking-[0.4em] animate-in fade-in duration-300">
+                Active containers and status across all servers
+              </p>
             </div>
-            <p className="text-[9px] text-neutral-500 uppercase tracking-[0.4em] animate-in fade-in duration-300">
-              Active containers and status across all servers
-            </p>
+          </div>
+
+          <div className="flex items-center gap-4 animate-in fade-in slide-in-from-right-2 duration-300">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-500" />
+              <input
+                type="text"
+                placeholder="FILTER_CONTAINERS..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-neutral-900/50 border border-white/10 px-10 py-2 text-xs focus:outline-none focus:border-white/30 w-64 uppercase placeholder:text-neutral-500 font-mono"
+              />
+            </div>
+            <button
+              onClick={fetchData}
+              className="flex items-center gap-2 px-4 py-2 border border-white text-xs font-bold hover:bg-white hover:text-black transition-all uppercase"
+            >
+              <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Sync_Data
+            </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 animate-in fade-in slide-in-from-right-2 duration-300">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-500" />
-            <input
-              type="text"
-              placeholder="FILTER_CONTAINERS..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-neutral-900/50 border border-white/10 px-10 py-2 text-xs focus:outline-none focus:border-white/30 w-64 uppercase placeholder:text-neutral-500 font-mono"
-            />
+        {/* Status Filters */}
+        {metadata && metadata.status && (
+          <div className="flex flex-wrap gap-2 items-center">
+            <div className="flex items-center gap-2 mr-2">
+              <Activity className="w-3 h-3 text-neutral-500" />
+              <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest">
+                Status_Filter:
+              </span>
+            </div>
+            {Object.entries(metadata.status).map(([status, count]) => {
+              if (count === 0 && status !== 'running') return null
+              const isActive = selectedStatus === status
+              return (
+                <button
+                  key={status}
+                  onClick={() => setSelectedStatus(isActive ? null : status)}
+                  className={`px-3 py-1 text-[9px] font-black uppercase tracking-tighter border transition-all flex items-center gap-2 ${
+                    isActive
+                      ? 'bg-white text-black border-white'
+                      : 'bg-white/5 text-neutral-500 border-white/5 hover:border-white/20'
+                  }`}
+                >
+                  {status}
+                  <span
+                    className={`px-1 rounded-sm ${isActive ? 'bg-black text-white' : 'bg-white/10 text-neutral-400'}`}
+                  >
+                    {count}
+                  </span>
+                </button>
+              )
+            })}
+            {selectedStatus && (
+              <button
+                onClick={() => setSelectedStatus(null)}
+                className="flex items-center gap-1 px-2 py-1 text-[9px] font-black text-red-500 uppercase hover:text-red-400 transition-colors"
+              >
+                <X className="w-3 h-3" /> Clear_Filter
+              </button>
+            )}
           </div>
-          <button
-            onClick={fetchData}
-            className="flex items-center gap-2 px-4 py-2 border border-white text-xs font-bold hover:bg-white hover:text-black transition-all uppercase"
-          >
-            <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Sync_Data
-          </button>
-        </div>
+        )}
       </div>
 
       {error && (
