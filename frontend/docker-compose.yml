@@ -1,0 +1,10 @@
+services:
+  snmp-frontend:
+    build: .
+    container_name: snmp-frontend
+    ports:
+      - "4321:4321"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=4321
+    restart: unless-stopped

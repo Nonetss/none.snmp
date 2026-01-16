@@ -1,0 +1,10 @@
+---
+import Main from '@/layouts/main.astro'
+import Dashboard from '@/features/dashboard/Dashboard'
+---
+
+<Main title="Network.Dashboard">
+  <main class="bg-black min-h-screen overflow-x-hidden">
+    <Dashboard client:only="react" />
+  </main>
+</Main>
