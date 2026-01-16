@@ -11,7 +11,7 @@ const ServerManager: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     setLoading(true)
     try {
       const response = await axios.get<ListServerDocker>('/api/v0/komodo/server')
@@ -23,11 +23,11 @@ const ServerManager: React.FC = () => {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }
 
   useEffect(() => {
     fetchData()
-  }, [fetchData])
+  }, [])
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]))
@@ -93,9 +93,9 @@ const ServerManager: React.FC = () => {
         {metadata && metadata.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 items-center">
             <div className="flex items-center gap-2 mr-2">
-              <TagIcon className="w-3 h-3 text-neutral-500" />
-              <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest">
-                Filter_By_Tag:
+              <TagIcon className="w-3 h-3 text-neutral-300" />
+              <span className="text-[9px] font-black text-neutral-300 uppercase tracking-widest">
+                Tags:
               </span>
             </div>
             {metadata.tags.map((tag) => {
@@ -184,7 +184,7 @@ const ServerManager: React.FC = () => {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5 relative mb-6">
               <div>
                 <p className="text-[8px] text-neutral-600 uppercase tracking-widest mb-1">Region</p>
                 <p className="text-[10px] font-bold text-neutral-400 truncate uppercase">
@@ -203,7 +203,7 @@ const ServerManager: React.FC = () => {
 
             <a
               href={`/container/${server.id}`}
-              className="mt-2 w-full py-2 bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-center hover:bg-white hover:text-black transition-all"
+              className="w-full py-2 bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-center hover:bg-white hover:text-black transition-all absolute left-0 bottom-0"
             >
               Host_Details
             </a>

@@ -29,9 +29,7 @@ const StackManager: React.FC = () => {
   const filteredStacks = useMemo(() => {
     if (!searchQuery) return stacks
     const q = searchQuery.toLowerCase()
-    return stacks.filter(
-      (s) => s.name.toLowerCase().includes(q) || s.server_name.toLowerCase().includes(q)
-    )
+    return stacks.filter((s) => s.name.toLowerCase().includes(q))
   }, [stacks, searchQuery])
 
   if (loading && stacks.length === 0) {

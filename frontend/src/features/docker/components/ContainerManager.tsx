@@ -11,7 +11,7 @@ const ContainerManager: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     setLoading(true)
     try {
       const response = await axios.get<ListContainerDocker>('/api/v0/komodo/container')
@@ -23,11 +23,11 @@ const ContainerManager: React.FC = () => {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }
 
   useEffect(() => {
     fetchData()
-  }, [fetchData])
+  }, [])
 
   const filteredContainers = useMemo(() => {
     return containers.filter((c) => {
@@ -94,9 +94,9 @@ const ContainerManager: React.FC = () => {
         {metadata && metadata.status && (
           <div className="flex flex-wrap gap-2 items-center">
             <div className="flex items-center gap-2 mr-2">
-              <Activity className="w-3 h-3 text-neutral-500" />
-              <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest">
-                Status_Filter:
+              <Activity className="w-3 h-3 text-neutral-300" />
+              <span className="text-[9px] font-black text-neutral-300 uppercase tracking-widest">
+                Status:
               </span>
             </div>
             {Object.entries(metadata.status).map(([status, count]) => {
