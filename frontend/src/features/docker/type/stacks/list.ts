@@ -6,6 +6,10 @@ export interface ListStackDocker {
 export interface Metadata {
   exists: boolean
   total_stacks: number
+  total_servers: number
+  servers: string[]
+  total_tags: number
+  tags: string[]
 }
 
 export interface Response {
@@ -15,6 +19,7 @@ export interface Response {
   template: boolean
   tags: string[]
   info: Info
+  server_name: string
 }
 
 export interface Info {
