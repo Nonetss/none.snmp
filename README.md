@@ -5,6 +5,7 @@ Este repositorio contiene las imágenes Docker para desplegar la solución compl
 ## 🐳 Imágenes Disponibles
 
 ### 1. Imagen Unificada (Recomendada)
+
 **Imagen:** `ghcr.io/nonetss/none.snmp:latest`
 
 Una única imagen que contiene tanto el backend como el frontend, ideal para la mayoría de despliegues.
@@ -14,6 +15,7 @@ docker pull ghcr.io/nonetss/none.snmp:latest
 ```
 
 ### 2. Imagen Backend
+
 **Imagen:** `ghcr.io/nonetss/none.snmp-backend:latest`
 
 Solo el backend API con todas las funcionalidades de descubrimiento y gestión SNMP.
@@ -23,6 +25,7 @@ docker pull ghcr.io/nonetss/none.snmp-backend:latest
 ```
 
 ### 3. Imagen Frontend
+
 **Imagen:** `ghcr.io/nonetss/none.snmp-frontend:latest`
 
 Solo el frontend (dashboard web) que se conecta a un backend externo.
@@ -40,6 +43,7 @@ docker pull ghcr.io/nonetss/none.snmp-frontend:latest
 Esta es la opción recomendada para la mayoría de casos. Una sola imagen que ejecuta backend y frontend juntos.
 
 **docker-compose.yml:**
+
 ```yaml
 services:
   app:
@@ -65,7 +69,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -75,6 +83,7 @@ volumes:
 ```
 
 **Ejecutar:**
+
 ```bash
 docker compose up -d
 ```
@@ -88,6 +97,7 @@ La aplicación estará disponible en `http://localhost:4321`
 Usa esta opción si necesitas escalar o actualizar backend y frontend de forma independiente.
 
 **docker-compose.yml:**
+
 ```yaml
 services:
   backend:
@@ -124,7 +134,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -134,6 +148,7 @@ volumes:
 ```
 
 **Ejecutar:**
+
 ```bash
 docker compose up -d
 ```
@@ -143,6 +158,7 @@ docker compose up -d
 ## 📋 Características Principales
 
 ### Backend
+
 - **Descubrimiento Inteligente:** Escaneo de subredes mediante ICMP y validación automática de credenciales SNMP (v1, v2c, v3)
 - **Topología de Red:** Generación de grafos de conexión cruzando datos de LLDP, CDP, y tablas de reenvío (FDB/Bridge)
 - **Inventario Detallado:** Recolección profunda de información de sistema, interfaces, software, procesos, y entidades físicas
@@ -151,6 +167,7 @@ docker compose up -d
 - **API Documentada:** OpenAPI con interfaz interactiva (Scalar)
 
 ### Frontend
+
 - **Dashboard Moderno:** Interfaz inspirada en terminal para visualización de alta densidad
 - **Visualización de Red:** Grafos interactivos de topología de red
 - **Monitorización en Tiempo Real:** Métricas de rendimiento y estado de dispositivos
@@ -161,13 +178,13 @@ docker compose up -d
 
 ## 🎯 ¿Cuándo usar cada imagen?
 
-| Escenario | Imagen Recomendada | Razón |
-|-----------|-------------------|-------|
-| Despliegue estándar | **Unificada** | Simplicidad, menor consumo de recursos |
-| Escalado horizontal | **Separadas** | Puedes escalar backend y frontend independientemente |
-| Desarrollo local | **Separadas** | Hot-reload y debugging más fácil |
-| Actualizaciones independientes | **Separadas** | Actualizar solo backend o solo frontend |
-| Problemas de firewall | **Separadas + Host Network** | Backend en red del host para SNMP |
+| Escenario                      | Imagen Recomendada           | Razón                                                |
+| ------------------------------ | ---------------------------- | ---------------------------------------------------- |
+| Despliegue estándar            | **Unificada**                | Simplicidad, menor consumo de recursos               |
+| Escalado horizontal            | **Separadas**                | Puedes escalar backend y frontend independientemente |
+| Desarrollo local               | **Separadas**                | Hot-reload y debugging más fácil                     |
+| Actualizaciones independientes | **Separadas**                | Actualizar solo backend o solo frontend              |
+| Problemas de firewall          | **Separadas + Host Network** | Backend en red del host para SNMP                    |
 
 ---
 
@@ -176,10 +193,12 @@ docker compose up -d
 ### Variables de Entorno
 
 #### Backend
+
 - `DATABASE_URL`: URL de conexión a PostgreSQL (requerido)
 - `PORT`: Puerto del servidor backend (default: 3000)
 
 #### Frontend
+
 - `BACKEND_URL`: URL del backend API (requerido cuando se usa imagen separada)
 - `HOST`: Host del servidor frontend (default: 0.0.0.0)
 - `PORT`: Puerto del servidor frontend (default: 80)
@@ -201,14 +220,14 @@ Los tags siguen el formato: `{branch}` o `{branch}-{sha}` (ej: `v0.6.0` o `v0.6.
 
 ## 📊 Comparativa de Opciones
 
-| Característica | Unificada | Separadas |
-|---------------|-----------|-----------|
-| **Contenedores** | 2 (app + db) | 3 (backend + frontend + db) |
-| **Consumo de recursos** | ⭐ Bajo | Medio |
-| **Complejidad** | ⭐ Simple | Media |
-| **Escalabilidad** | Básica | ⭐ Alta |
-| **Actualizaciones independientes** | ❌ | ✅ |
-| **Hot-reload en desarrollo** | ❌ | ✅ |
+| Característica                     | Unificada    | Separadas                   |
+| ---------------------------------- | ------------ | --------------------------- |
+| **Contenedores**                   | 2 (app + db) | 3 (backend + frontend + db) |
+| **Consumo de recursos**            | ⭐ Bajo      | Medio                       |
+| **Complejidad**                    | ⭐ Simple    | Media                       |
+| **Escalabilidad**                  | Básica       | ⭐ Alta                     |
+| **Actualizaciones independientes** | ❌           | ✅                          |
+| **Hot-reload en desarrollo**       | ❌           | ✅                          |
 
 ---
 
@@ -236,15 +255,6 @@ Los tags siguen el formato: `{branch}` o `{branch}-{sha}` (ej: `v0.6.0` o `v0.6.
 
 ---
 
-## 📚 Documentación Adicional
-
-- **Backend API:** Disponible en `http://localhost:3000/scalar` (cuando el backend está corriendo)
-- **Repositorios:**
-  - [Backend](https://github.com/Nonetss/none.snmp-backend)
-  - [Frontend](https://github.com/Nonetss/none.snmp-frontend)
-
----
-
 ## 📝 Licencia
 
 Este proyecto está bajo la Licencia GNU General Public License v3.0 (GPLv3). Consulta el archivo [LICENSE](./LICENSE) para más detalles.
@@ -254,10 +264,9 @@ Este proyecto está bajo la Licencia GNU General Public License v3.0 (GPLv3). Co
 ## 🆘 Soporte
 
 Si encuentras algún problema o tienes preguntas:
+
 1. Revisa la documentación de cada componente
 2. Verifica los logs: `docker logs none-snmp`
 3. Asegúrate de que las variables de entorno estén correctamente configuradas
 
 ---
-
-_Desarrollado con ❤️ para la gestión moderna de infraestructuras de red._
