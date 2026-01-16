@@ -26,7 +26,7 @@ jobs:
           BRANCH=${{ github.ref_name }}
           SHA=$(echo ${{ github.sha }} | cut -c1-8)
 
-          docker build . \
+          docker build -f Dockerfile ./docker \
             -t $IMAGE_ID:latest \
             -t $IMAGE_ID:$BRANCH \
             -t $IMAGE_ID:$BRANCH-$SHA
