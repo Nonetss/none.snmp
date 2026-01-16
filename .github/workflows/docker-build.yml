@@ -25,11 +25,11 @@ jobs:
 
       - name: Build and Push Backend
         run: |
-          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           BRANCH=${{ github.ref_name }}
           SHA=$(echo ${{ github.sha }} | cut -c1-8)
           
-          IMAGE_ID=ghcr.io/$REPO_OWNER/none-snmp-backend
+          IMAGE_ID=ghcr.io/$REPO_NAME-backend
           IMAGE_ID=$(echo $IMAGE_ID | tr '[:upper:]' '[:lower:]')
 
           docker build -f backend/Dockerfile ./backend \
@@ -43,11 +43,11 @@ jobs:
 
       - name: Build and Push Frontend
         run: |
-          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           BRANCH=${{ github.ref_name }}
           SHA=$(echo ${{ github.sha }} | cut -c1-8)
           
-          IMAGE_ID=ghcr.io/$REPO_OWNER/none-snmp-frontend
+          IMAGE_ID=ghcr.io/$REPO_NAME-frontend
           IMAGE_ID=$(echo $IMAGE_ID | tr '[:upper:]' '[:lower:]')
 
           docker build -f frontend/Dockerfile ./frontend \
@@ -61,11 +61,11 @@ jobs:
 
       - name: Build and Push Unified
         run: |
-          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           BRANCH=${{ github.ref_name }}
           SHA=$(echo ${{ github.sha }} | cut -c1-8)
           
-          IMAGE_ID=ghcr.io/$REPO_OWNER/none-snmp
+          IMAGE_ID=ghcr.io/$REPO_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[:upper:]' '[:lower:]')
 
           docker build -f docker/unified/Dockerfile . \
