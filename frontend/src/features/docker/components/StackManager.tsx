@@ -48,7 +48,7 @@ const StackManager: React.FC = () => {
       const matchesSearch = !searchQuery || s.name.toLowerCase().includes(searchQuery.toLowerCase())
 
       const matchesTags =
-        selectedTags.length === 0 || selectedTags.every((tag) => s.tags?.includes(tag))
+        selectedTags.length === 0 || selectedTags.every((tag) => s.tags.includes(tag))
 
       const matchesServer = !selectedServer || s.server_name === selectedServer
 
@@ -206,7 +206,7 @@ const StackManager: React.FC = () => {
               <div className="flex items-center gap-2 text-neutral-500">
                 <HardDrive className="w-3 h-3" />
                 <p className="text-[10px] truncate uppercase font-bold tracking-tighter">
-                  {stack.info.server_id.slice(0, 8)}
+                  {stack.server_name}
                 </p>
               </div>
             </div>
