@@ -5,6 +5,7 @@ export const stackItemSchema = z.object({
   name: z.string(),
   template: z.boolean(),
   tags: z.array(z.string()),
+  server_name: z.string(),
   info: z.object({
     server_id: z.string(),
     files_on_host: z.boolean(),
@@ -35,6 +36,10 @@ export const stackListResponseSchema = z.array(stackItemSchema);
 export const stackListMetadataSchema = z.object({
   exists: z.boolean(),
   total_stacks: z.number(),
+  total_servers: z.number(),
+  servers: z.array(z.string()),
+  total_tags: z.number(),
+  tags: z.array(z.string()),
 });
 
 export const stackListResponse = z.object({
