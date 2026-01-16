@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+# Ejecutar lint-staged en backend
+cd backend && bunx lint-staged && cd ..
+
+# Ejecutar lint-staged en frontend
+cd frontend && bunx lint-staged && cd ..
