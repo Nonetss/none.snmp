@@ -22,6 +22,14 @@ interface NpmAuth {
   password: string
 }
 
+interface NpmAuthGetResponse {
+  auth: NpmAuth[]
+  metadata: {
+    exists: boolean
+    total: number
+  }
+}
+
 const NpmAuthManager: React.FC = () => {
   const [auths, setAuths] = useState<NpmAuth[]>([])
   const [loading, setLoading] = useState(true)
@@ -40,12 +48,9 @@ const NpmAuthManager: React.FC = () => {
   const fetchAuths = async () => {
     setLoading(true)
     try {
-      const response = await axios.get(`/api/v0/proxy/npm/auth`)
-      const data = Array.isArray(response.data)
-        ? response.data
-        : response.data
-          ? [response.data]
-          : []
+      const response = await axios.get<NpmAuthGetResponse>(`/api/v0/proxy/npm/auth`)
+      // El endpoint devuelve { auth, metadata }
+      const data = response.data?.auth || []
       setAuths(data)
       setError(null)
     } catch (err: any) {
@@ -64,7 +69,8 @@ const NpmAuthManager: React.FC = () => {
     setSubmitting(true)
     try {
       if (editingId) {
-        await axios.patch(`/api/v0/proxy/npm/auth/${editingId}`, formData)
+        // PATCH no usa ID en la ruta, actualiza el primero que encuentra
+        await axios.patch(`/api/v0/proxy/npm/auth`, formData)
       } else {
         await axios.post(`/api/v0/proxy/npm/auth`, formData)
       }

@@ -11,4 +11,8 @@ export const npmAuthResponseSchema = z.object({
   url: z.string(),
   username: z.string(),
   password: z.string(),
+  metadata: z.object({
+    exists: z.boolean(),
+    total: z.number(),
+  }),
 });

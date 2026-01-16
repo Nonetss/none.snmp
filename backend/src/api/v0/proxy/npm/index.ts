@@ -5,6 +5,6 @@ import npmAuthRouter from './auth';
 const npmProxyRouter = new OpenAPIHono();
 
 npmProxyRouter.route('/', npmGetRouter);
-npmProxyRouter.route('/auth', npmAuthRouter);
+npmProxyRouter.route('/npm', npmAuthRouter);
 
 export default npmProxyRouter;

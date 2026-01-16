@@ -1,14 +1,17 @@
 import type { RouteHandler } from '@hono/zod-openapi';
-import type { getNpmAuthRoute } from './get.route';
+import type { getNpmAuthRoute } from '@/api/v0/proxy/npm/auth/get/get.route';
 import { db } from '@/core/config';
-import { npmAuthTable } from '@/db';
 
 export const getNpmAuthHandler: RouteHandler<typeof getNpmAuthRoute> = async (
   c,
 ) => {
   try {
-    const [auth] = await db.select().from(npmAuthTable).limit(1);
-    return c.json(auth || null, 200);
+    const auth = await db.query.npmAuthTable.findMany();
+    const metadata = {
+      exists: auth.length > 0,
+      total: auth.length,
+    };
+    return c.json({ auth, metadata }, 200);
   } catch (error) {
     console.error('[NPM Auth GET] Error:', error);
     return c.json({ message: 'Internal Server Error' }, 500) as any;
