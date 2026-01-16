@@ -213,7 +213,7 @@ const StackManager: React.FC = () => {
 
             {/* Stack Tags */}
             {stack.tags && stack.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1.5 mb-6">
                 {stack.tags.map((tag) => (
                   <span
                     key={tag}
@@ -225,11 +225,9 @@ const StackManager: React.FC = () => {
               </div>
             )}
 
-            <div className="mt-auto pt-4 border-t border-white/5">
-              <button className="w-full py-2 bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-center hover:bg-white hover:text-black transition-all cursor-not-allowed opacity-50">
-                Manage_Stack
-              </button>
-            </div>
+            <button className="w-full py-2 bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-center hover:bg-white hover:text-black transition-all cursor-not-allowed opacity-50 absolute left-0 bottom-0">
+              Manage_Stack
+            </button>
           </div>
         ))}
       </div>

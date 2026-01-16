@@ -181,7 +181,7 @@ const ContainerManager: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+            <div className="grid grid-cols-2 gap-4 mb-6 border-t border-white/5">
               <div>
                 <p className="text-[8px] text-neutral-600 uppercase tracking-widest mb-1">
                   Server ID
@@ -202,7 +202,7 @@ const ContainerManager: React.FC = () => {
 
             <a
               href={`/container/${container.id}`}
-              className="mt-2 w-full py-2 bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-center hover:bg-white hover:text-black transition-all"
+              className="w-full py-2 bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-center hover:bg-white hover:text-black transition-all absolute left-0 bottom-0"
             >
               Inspect_Container
             </a>
