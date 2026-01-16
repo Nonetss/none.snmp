@@ -1,48 +1,104 @@
-export interface PangolinTarget {
-  targetId: number
-  ip: string
-  port: number
-  enabled: boolean
-  healthStatus: string
+export interface ProxyInfo {
+  response: Response
+  metadata: Metadata
 }
 
-export interface PangolinItem {
+export interface Metadata {
+  exists: boolean
+  npm: PangolinClass
+  pangolin: PangolinClass
+  total_resources: number
+}
+
+export interface PangolinClass {
+  exists: boolean
+  total_org: number
+}
+
+export interface Response {
+  npm: NpmElement[]
+  pangolin: Pangolin[]
+}
+
+export interface NpmElement {
+  url: string
+  resource: NpmResource[]
+}
+
+export interface NpmResource {
+  id: number
+  created_on: Date
+  modified_on: Date
+  owner_user_id: number
+  domain_names: string[]
+  forward_host: string
+  forward_port: number
+  access_list_id: number
+  certificate_id: number
+  ssl_forced: boolean
+  caching_enabled: boolean
+  block_exploits: boolean
+  advanced_config: string
+  meta: Meta
+  allow_websocket_upgrade: boolean
+  http2_support: boolean
+  forward_scheme: string
+  enabled: boolean
+  locations: Location[]
+  hsts_enabled: boolean
+  hsts_subdomains: boolean
+}
+
+export interface Location {
+  path: string
+  advanced_config: string
+  forward_scheme: string
+  forward_host: string
+  forward_port: number
+}
+
+export interface Meta {
+  letsencrypt_agree: boolean
+  dns_challenge: boolean
+  nginx_online: boolean
+  nginx_err: null
+}
+
+export interface Pangolin {
+  url: string
+  org: string
+  resource: PangolinResource[]
+}
+
+export interface PangolinResource {
   resourceId: number
   niceId: string
   name: string
   ssl: boolean
   fullDomain: string
-  passwordId: number | null
+  passwordId: null
   sso: boolean
-  pincodeId: number | null
+  pincodeId: null
   whitelist: boolean
   http: boolean
   protocol: string
-  proxyPort: number | null
+  proxyPort: null
   enabled: boolean
   domainId: string
-  headerAuthId: number | null
-  targets: PangolinTarget[]
+  headerAuthId: null
+  targets: Target[]
 }
 
-export interface NpmProxyHost {
-  id: number
-  created_on: string
-  modified_on: string
-  domain_names: string[]
-  forward_host: string
-  forward_port: number
-  access_list_id: number
-  certificate_id: number | string
-  ssl_forced: boolean
-  caching_enabled: boolean
-  block_exploits: boolean
-  advanced_config: string
+export interface Target {
+  targetId: number
+  ip: string
+  port: number
   enabled: boolean
-  http2_support: boolean
-  hsts_enabled: boolean
-  hsts_subdomains: boolean
-  preserve_host: boolean
-  allow_websocket_upgrade: boolean
-  status: string
+  healthStatus: HealthStatus
+}
+
+export enum HealthStatus {
+  Healthy = 'healthy',
+  Unhealthy = 'unhealthy',
+  Unknown = 'unknown',
 }

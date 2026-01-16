@@ -7,18 +7,12 @@ import {
   CheckCircle2,
   XCircle,
   Server,
-  Shield,
   RefreshCcw,
   ExternalLink,
-  ChevronRight,
   ShieldCheck,
-  Zap,
 } from 'lucide-react'
-import { InfoCard } from '@/components/ui/info-card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import type { ProxyInfo, NpmResource, PangolinResource } from './types'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import type { PangolinItem, NpmProxyHost } from './types'
 
 // Internal KeyValue Components since they are not in UI library
 const KeyValueSection = ({
@@ -73,24 +67,24 @@ type TabId = 'both' | 'npm' | 'pangolin'
 
 const ProxyManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('both')
-  const [npmData, setNpmData] = useState<NpmProxyHost[]>([])
-  const [pangolinData, setPangolinData] = useState<PangolinItem[]>([])
+  const [npmData, setNpmData] = useState<NpmResource[]>([])
+  const [pangolinData, setPangolinData] = useState<PangolinResource[]>([])
+  const [metadata, setMetadata] = useState<ProxyInfo['metadata'] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
-  const [selectedNpm, setSelectedNpm] = useState<NpmProxyHost | null>(null)
-  const [selectedPangolin, setSelectedPangolin] = useState<PangolinItem | null>(null)
+  const [selectedNpm, setSelectedNpm] = useState<NpmResource | null>(null)
+  const [selectedPangolin, setSelectedPangolin] = useState<PangolinResource | null>(null)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const [npmRes, pangolinRes] = await Promise.all([
-        axios.get<NpmProxyHost[]>('/api/v0/proxy/npm'),
-        axios.get<PangolinItem[]>('/api/v0/proxy/pangolin'),
-      ])
-      setNpmData(npmRes.data || [])
-      setPangolinData(pangolinRes.data || [])
+      const response = await axios.get<ProxyInfo>('/api/v0/proxy/both')
+      const { npm, pangolin } = response.data.response
+      setNpmData(npm.flatMap((e) => e.resource) || [])
+      setPangolinData(pangolin.flatMap((p) => p.resource) || [])
+      setMetadata(response.data.metadata)
     } catch (e: any) {
       console.error(e)
       setError('SYSTEM_FAILURE: Telemetry links broken')
@@ -170,15 +164,20 @@ const ProxyManager: React.FC = () => {
 
           <div className="flex items-center gap-4 border-l border-white/10 pl-6">
             <div className="flex flex-col items-end">
-              <span className="text-[9px] text-neutral-800 font-black uppercase tracking-widest mb-1">
+              <span className="text-[9px] text-neutral-300 font-black uppercase tracking-widest mb-1">
                 Node_Status
               </span>
               <div className="flex gap-2">
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 text-[9px] font-bold text-neutral-400">
-                  <Server className="size-3" /> NPM: {npmData.length}
+                  <Server className="size-3" /> NPM: {metadata?.npm.total_org || 0} Orgs (
+                  {npmData.length})
                 </div>
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 text-[9px] font-bold text-neutral-400">
-                  <ShieldCheck className="size-3" /> PGLN: {pangolinData.length}
+                  <ShieldCheck className="size-3" /> PGLN: {metadata?.pangolin.total_org || 0} Orgs
+                  ({pangolinData.length})
+                </div>
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 text-[9px] font-black text-white">
+                  <Globe className="size-3" /> TOTAL: {metadata?.total_resources || 0}
                 </div>
               </div>
             </div>
