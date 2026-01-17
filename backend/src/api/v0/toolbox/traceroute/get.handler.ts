@@ -11,7 +11,7 @@ export const getTracerouteHandler: RouteHandler<
     const hops = await new Promise<any[]>((resolve, reject) => {
       const hopsList: any[] = [];
       const command = 'traceroute';
-      const args = ['-I', host];
+      const args = ['-n', host];
 
       const child = spawn(command, args);
 
