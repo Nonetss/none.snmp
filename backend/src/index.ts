@@ -4,6 +4,16 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { Handler } from 'hono';
 import { sendExcel } from '@/lib/excel';
+import { count } from 'drizzle-orm';
+import { db } from '@/core/config';
+import { authUser } from '@/db';
+import { auth } from '@/lib/auth';
+import { logger as pinoLogger } from '@/lib/logger';
+
+import apiRouter from '@/api';
+import { initScheduler } from '@/core/services/scheduler.service';
+import { seedMetrics } from '@/lib/snmp/seed';
+import { seedDefaultTasks } from '@/lib/snmp/seedTasks';
 
 const app = new OpenAPIHono();
 
@@ -56,14 +66,62 @@ const rootHandler: Handler = (c) => {
 
 app.openapi(rootRoute, rootHandler);
 
-import apiRouter from '@/api';
-import { initScheduler } from '@/core/services/scheduler.service';
-import { seedMetrics } from '@/lib/snmp/seed';
-import { seedDefaultTasks } from '@/lib/snmp/seedTasks';
+app.get('/api/v0/auth/first-run', async (c) => {
+  try {
+    const result = await db.select({ value: count() }).from(authUser);
+    return c.json({ firstRun: result[0].value === 0 });
+  } catch (err) {
+    return c.json({ firstRun: false, error: true }, 500);
+  }
+});
 
-import { logger as pinoLogger } from '@/lib/logger';
+// Better Auth routes - debe estar antes de otras rutas /api para que funcione correctamente
+app.on(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/api/auth/*', async (c) => {
+  return auth.handler(c.req.raw)
+})
 
 app.route('/api', apiRouter);
+
+async function seedAdminUser() {
+  try {
+    pinoLogger.info('[Auth Seed] Checking for existing users...');
+    const result = await db.select({ value: count() }).from(authUser);
+    const userCount = Number(result[0].value);
+    
+    pinoLogger.info(`[Auth Seed] Current user count: ${userCount}`);
+
+    if (userCount === 0) {
+      const adminEmail = 'admin@admin.com';
+      const adminPassword = Math.random().toString(36).slice(-10);
+      const adminName = 'Admin User';
+
+      pinoLogger.info('[Auth Seed] No users found. Generating admin account...');
+
+      await auth.api.signUpEmail({
+        body: {
+          email: adminEmail,
+          password: adminPassword,
+          name: adminName,
+        },
+      });
+
+      console.log('\n' + '█'.repeat(60));
+      console.log('█' + ' '.repeat(58) + '█');
+      console.log('█   ADMIN USER AUTOMATICALLY CREATED' + ' '.repeat(23) + '█');
+      console.log('█' + ' '.repeat(58) + '█');
+      console.log(`█   Email:    ${adminEmail.padEnd(41)} █`);
+      console.log(`█   Password: ${adminPassword.padEnd(41)} █`);
+      console.log('█' + ' '.repeat(58) + '█');
+      console.log('█'.repeat(60) + '\n');
+      
+      pinoLogger.info({ adminEmail }, '[Auth Seed] Admin user created successfully');
+    } else {
+      pinoLogger.info('[Auth Seed] Users already exist, skipping admin generation.');
+    }
+  } catch (err) {
+    pinoLogger.error({ err }, '[Auth Seed] Failed to check or seed admin user');
+  }
+}
 
 // Initial database seeding
 async function initialize() {
@@ -72,6 +130,9 @@ async function initialize() {
     pinoLogger.info(`[Seed] Successfully seeded ${mibs.length} MIBs`);
 
     await seedDefaultTasks();
+
+    // Seed admin user if needed
+    await seedAdminUser();
 
     // Initialize background scheduler
     await initScheduler();

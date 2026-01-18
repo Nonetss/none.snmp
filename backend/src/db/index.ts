@@ -77,6 +77,7 @@ import {
 } from '@/db/models/auth/pangolinAuth.table';
 import { npmAuthTable } from '@/db/models/auth/npmAuth.table';
 import { komodoAuthTable } from '@/db/models/auth/komodoAuth.table';
+import { user as authUser, session as authSession, account as authAccount, verification as authVerification } from '@/db/models/auth/better-auth-user.table';
 
 export {
   deviceTable,
@@ -169,4 +170,10 @@ export {
   npmAuthTable,
   pangolinAuthTable,
   pangolinOrgTable,
+
+  // Better Auth
+  authUser,
+  authSession,
+  authAccount,
+  authVerification,
 };
