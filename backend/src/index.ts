@@ -109,8 +109,8 @@ async function seedAdminUser() {
       console.log('█' + ' '.repeat(58) + '█');
       console.log('█   ADMIN USER AUTOMATICALLY CREATED' + ' '.repeat(23) + '█');
       console.log('█' + ' '.repeat(58) + '█');
-      console.log(`█   Email:    ${adminEmail.padEnd(41)} █`);
-      console.log(`█   Password: ${adminPassword.padEnd(41)} █`);
+      console.log(`█   Email:    ${adminEmail.padEnd(44)} █`);
+      console.log(`█   Password: ${adminPassword.padEnd(44)} █`);
       console.log('█' + ' '.repeat(58) + '█');
       console.log('█'.repeat(60) + '\n');
       
