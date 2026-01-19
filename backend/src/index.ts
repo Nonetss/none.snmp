@@ -66,19 +66,10 @@ const rootHandler: Handler = (c) => {
 
 app.openapi(rootRoute, rootHandler);
 
-app.get('/api/v0/auth/first-run', async (c) => {
-  try {
-    const result = await db.select({ value: count() }).from(authUser);
-    return c.json({ firstRun: result[0].value === 0 });
-  } catch (err) {
-    return c.json({ firstRun: false, error: true }, 500);
-  }
-});
-
 // Better Auth routes - debe estar antes de otras rutas /api para que funcione correctamente
 app.on(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/api/auth/*', async (c) => {
-  return auth.handler(c.req.raw)
-})
+  return auth.handler(c.req.raw);
+});
 
 app.route('/api', apiRouter);
 
@@ -87,7 +78,7 @@ async function seedAdminUser() {
     pinoLogger.info('[Auth Seed] Checking for existing users...');
     const result = await db.select({ value: count() }).from(authUser);
     const userCount = Number(result[0].value);
-    
+
     pinoLogger.info(`[Auth Seed] Current user count: ${userCount}`);
 
     if (userCount === 0) {
@@ -95,7 +86,9 @@ async function seedAdminUser() {
       const adminPassword = Math.random().toString(36).slice(-10);
       const adminName = 'Admin User';
 
-      pinoLogger.info('[Auth Seed] No users found. Generating admin account...');
+      pinoLogger.info(
+        '[Auth Seed] No users found. Generating admin account...',
+      );
 
       await auth.api.signUpEmail({
         body: {
@@ -107,19 +100,33 @@ async function seedAdminUser() {
 
       console.log('\n' + '█'.repeat(60));
       console.log('█' + ' '.repeat(58) + '█');
-      console.log('█   ADMIN USER AUTOMATICALLY CREATED' + ' '.repeat(23) + '█');
+      console.log(
+        '█   ADMIN USER AUTOMATICALLY CREATED' + ' '.repeat(23) + '█',
+      );
       console.log('█' + ' '.repeat(58) + '█');
       console.log(`█   Email:    ${adminEmail.padEnd(44)} █`);
       console.log(`█   Password: ${adminPassword.padEnd(44)} █`);
       console.log('█' + ' '.repeat(58) + '█');
       console.log('█'.repeat(60) + '\n');
-      
-      pinoLogger.info({ adminEmail }, '[Auth Seed] Admin user created successfully');
+
+      pinoLogger.info(
+        {
+          adminEmail,
+        },
+        '[Auth Seed] Admin user created successfully',
+      );
     } else {
-      pinoLogger.info('[Auth Seed] Users already exist, skipping admin generation.');
+      pinoLogger.info(
+        '[Auth Seed] Users already exist, skipping admin generation.',
+      );
     }
   } catch (err) {
-    pinoLogger.error({ err }, '[Auth Seed] Failed to check or seed admin user');
+    pinoLogger.error(
+      {
+        err,
+      },
+      '[Auth Seed] Failed to check or seed admin user',
+    );
   }
 }
 
@@ -137,7 +144,12 @@ async function initialize() {
     // Initialize background scheduler
     await initScheduler();
   } catch (err) {
-    pinoLogger.error({ err }, '[Seed] Critical error during initialization');
+    pinoLogger.error(
+      {
+        err,
+      },
+      '[Seed] Critical error during initialization',
+    );
   }
 }
 
@@ -157,8 +169,4 @@ app.doc('/doc', {
 
 app.get('/scalar', Scalar({ url: '/doc' }));
 
-Bun.serve({
-  port: 3000,
-  fetch: app.fetch,
-  idleTimeout: 0,
-});
+Bun.serve({ port: 3000, fetch: app.fetch, idleTimeout: 0 });
