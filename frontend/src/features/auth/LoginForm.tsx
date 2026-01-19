@@ -1,28 +1,12 @@
 import * as React from 'react'
 import { authClient } from '@/lib/auth-client'
-import { Mail, Lock, RefreshCcw, AlertCircle, ShieldAlert } from 'lucide-react'
-import axios from 'axios'
+import { Mail, Lock, RefreshCcw, AlertCircle } from 'lucide-react'
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
-  const [isFirstRun, setIsFirstRun] = React.useState(false)
-
-  React.useEffect(() => {
-    const checkFirstRun = async () => {
-      try {
-        const res = await axios.get('/api/v0/auth/first-run')
-        if (res.data.firstRun) {
-          setIsFirstRun(true)
-        }
-      } catch (e) {
-        // Ignore error
-      }
-    }
-    checkFirstRun()
-  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -30,21 +14,31 @@ const LoginForm: React.FC = () => {
     setIsLoading(true)
 
     try {
-      const result = await authClient.signIn.email({
+      const { data, error } = await authClient.signIn.email({
         email,
         password,
       })
 
-      if (result.error) {
-        setError(result.error.message || 'Error al iniciar sesión')
+      console.log('Login response:', { data, error })
+
+      if (error) {
+        setError(error.message ?? 'Ocurrió un error al iniciar sesión')
+        setIsLoading(false)
         return
       }
 
-      // Redirigir al dashboard después del login exitoso
-      window.location.href = '/'
-    } catch (err: any) {
-      setError(err.message || 'Error al iniciar sesión')
-    } finally {
+      // Si el login fue exitoso, redirigir inmediatamente
+      if (data) {
+        console.log('Login exitoso, redirigiendo...')
+        window.location.replace('/')
+      } else {
+        // Si no hay data ni error, algo raro pasó
+        setError('Respuesta inesperada del servidor')
+        setIsLoading(false)
+      }
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('Algo salió mal. Por favor, intenta nuevamente.')
       setIsLoading(false)
     }
   }
@@ -64,22 +58,6 @@ const LoginForm: React.FC = () => {
       </div>
 
       <div className="bg-neutral-900/40 border border-white/10 p-5 space-y-5 backdrop-blur-md">
-        {isFirstRun && (
-          <div className="p-4 border border-blue-500/30 bg-blue-500/5 flex flex-col gap-2 text-[10px] font-mono">
-            <div className="flex items-center gap-2 text-blue-400 font-bold uppercase tracking-widest">
-              <ShieldAlert className="w-4 h-4" />
-              Initial_Setup_Detected
-            </div>
-            <p className="text-neutral-400 leading-relaxed uppercase">
-              No users found. An admin account has been automatically created.
-              Please check the <span className="text-white font-bold">backend console logs</span> for the generated password.
-            </p>
-            <div className="text-neutral-500 text-[9px] border-t border-white/5 pt-2">
-              Default Email: admin@admin.com
-            </div>
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-5 font-mono">
           <div className="space-y-1.5">
             <label
@@ -129,8 +107,7 @@ const LoginForm: React.FC = () => {
 
           {error && (
             <div className="p-4 border border-red-500/30 bg-red-500/5 flex items-center gap-3 text-red-500 text-[9px] font-black uppercase tracking-widest animate-in slide-in-from-top-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              {error}
+              <AlertCircle className="w-4 h-4 shrink-0" /> {error}{' '}
             </div>
           )}
 
@@ -140,6 +117,7 @@ const LoginForm: React.FC = () => {
               disabled={isLoading}
               className="w-full bg-white text-black py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-neutral-200 transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
+              {' '}
               {isLoading && <RefreshCcw className="w-3 h-3 animate-spin" />}
               {isLoading ? 'Authenticating...' : 'Sign_In'}
             </button>

@@ -1,0 +1,24 @@
+---
+import '@/styles/global.css'
+
+const { session } = Astro.locals
+
+if (session) {
+  return Astro.redirect('/')
+}
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Iniciar Sesión - Network.Dashboard</title>
+  </head>
+  <body
+    class="bg-black text-white selection:bg-white selection:text-black font-mono overflow-hidden"
+  >
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
