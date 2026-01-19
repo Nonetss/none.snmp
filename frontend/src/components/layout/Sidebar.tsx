@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { authClient } from '@/lib/auth-client'
 import {
   LayoutDashboard,
   Share2,
@@ -23,6 +24,7 @@ import {
   Laptop,
   Globe,
   Wrench,
+  LogOut,
 } from 'lucide-react'
 
 interface Props {
@@ -43,6 +45,7 @@ const Sidebar: React.FC<Props> = ({
   const [pinging, setPinging] = useState(false)
   const [scanning, setScanning] = useState(false)
   const [polling, setPolling] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [showActions, setShowActions] = useState(initialShowActions)
   const [toast, setToast] = useState<{ message: string; visible: boolean }>({
     message: '',
@@ -52,6 +55,17 @@ const Sidebar: React.FC<Props> = ({
   const showToast = (message: string) => {
     setToast({ message, visible: true })
     setTimeout(() => setToast((prev) => ({ ...prev, visible: false })), 5000)
+  }
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await authClient.signOut()
+      window.location.replace('/login')
+    } catch (err: any) {
+      showToast('Logout failed: ' + (err.message || 'Unknown error'))
+      setIsLoggingOut(false)
+    }
   }
 
   const handleGlobalPing = async () => {
@@ -440,6 +454,23 @@ const Sidebar: React.FC<Props> = ({
               System_Settings
             </span>
           </a>
+
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className={`w-full flex items-center h-11 px-2.5 transition-all relative text-red-500/60 hover:bg-red-500/10 hover:text-red-500 disabled:opacity-50 cursor-pointer`}
+          >
+            <LogOut
+              className={`w-5 h-5 min-w-[20px] shrink-0 ${isLoggingOut ? 'animate-pulse' : ''}`}
+            />
+            <span
+              className={`ml-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-300 overflow-hidden ${
+                isExpanded ? 'w-auto opacity-100' : 'w-0 opacity-0'
+              }`}
+            >
+              {isLoggingOut ? 'Signing_Out...' : 'Sign_Out'}
+            </span>
+          </button>
         </div>
 
         {/* Global Toast */}
