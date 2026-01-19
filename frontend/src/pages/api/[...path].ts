@@ -10,8 +10,11 @@ export const ALL: APIRoute = async ({ request, params }) => {
   const targetUrl = `${backendUrl}/api/${path}${url.search}`
 
   const headers = new Headers(request.headers)
-  headers.delete('host')
-  headers.delete('referer') // A veces causa problemas de seguridad en el backend
+  headers.set('host', new URL(backendUrl).host)
+
+  // No borrar referer ni origin ya que better-auth los usa para validaciones CSRF
+  // Pero sí podemos asegurar que apunten al backend si es necesario,
+  // aunque better-auth suele preferir el origin del cliente.
 
   try {
     const response = await fetch(targetUrl, {
@@ -27,11 +30,27 @@ export const ALL: APIRoute = async ({ request, params }) => {
     // Extraer el cuerpo como buffer para asegurar que se envía completo
     const resBody = await response.arrayBuffer()
 
-    // Clonar las cabeceras de respuesta pero filtrar las que causan problemas en proxies
-    const resHeaders = new Headers(response.headers)
-    resHeaders.delete('content-encoding') // Dejar que Astro/Node lo maneje
-    resHeaders.delete('transfer-encoding')
-    resHeaders.delete('content-length') // Se recalcula automáticamente
+    // Clonar las cabeceras de respuesta
+    const resHeaders = new Headers()
+
+    // Copiar todas las cabeceras excepto las que maneja Astro/Node automáticamente
+    for (const [key, value] of response.headers.entries()) {
+      if (
+        !['content-encoding', 'transfer-encoding', 'content-length'].includes(key.toLowerCase())
+      ) {
+        resHeaders.append(key, value)
+      }
+    }
+
+    // Manejo especial para múltiples Set-Cookie (vital para better-auth)
+    // @ts-ignore - getSetCookie existe en entornos modernos de Node/Bun
+    if (response.headers.getSetCookie) {
+      resHeaders.delete('set-cookie')
+      // @ts-ignore
+      for (const cookie of response.headers.getSetCookie()) {
+        resHeaders.append('set-cookie', cookie)
+      }
+    }
 
     return new Response(resBody, {
       status: response.status,
