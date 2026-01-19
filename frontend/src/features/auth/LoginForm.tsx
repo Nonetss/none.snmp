@@ -19,8 +19,6 @@ const LoginForm: React.FC = () => {
         password,
       })
 
-      console.log('Login response:', { data, error })
-
       if (error) {
         setError(error.message ?? 'Ocurrió un error al iniciar sesión')
         setIsLoading(false)
@@ -29,7 +27,6 @@ const LoginForm: React.FC = () => {
 
       // Si el login fue exitoso, redirigir inmediatamente
       if (data) {
-        console.log('Login exitoso, redirigiendo...')
         window.location.replace('/')
       } else {
         // Si no hay data ni error, algo raro pasó
@@ -37,7 +34,6 @@ const LoginForm: React.FC = () => {
         setIsLoading(false)
       }
     } catch (err) {
-      console.error('Login error:', err)
       setError('Algo salió mal. Por favor, intenta nuevamente.')
       setIsLoading(false)
     }
