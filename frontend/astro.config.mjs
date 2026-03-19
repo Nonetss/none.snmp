@@ -9,8 +9,14 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
+  prefetch: {
+    prefetchAll: true,
+  },
   vite: {
     plugins: [tailwindcss()],
+  },
+  build: {
+    assets: '_astro-old',
   },
   integrations: [react()],
 })
